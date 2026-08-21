@@ -2,17 +2,9 @@
 
 Turn a Mac trackpad into a one-finger absolute pointing surface for osu!. TabPad maps each physical trackpad position to one fixed screen position, like a drawing tablet.
 
-Application UI:
-<img width="1470" height="956" alt="image" src="https://github.com/user-attachments/assets/1255ef0c-fe5c-4ec5-80f3-212ec4f2a86b" />
-
-
-Download Here, then follow next steps:
-https://github.com/ayaanchugh30-ship-it/TabPad/releases/tag/release
-
-
 > **GitHub description:** Turn a Mac trackpad into an absolute osu! tablet surface.
 
-## If you only want the app
+## I only want the app
 
 On the GitHub **Releases** page, download:
 
@@ -38,17 +30,22 @@ That is everything a normal user needs. You do not need Xcode, Terminal, or any 
 - Provides an interactive area editor, typed numeric values, millimeter mode, aspect-ratio lock, and centering
 - Shows the live finger position and detected hardware
 - Saves the selected active area across launches
-- Applies a tiny jitter filter and limits synthetic mouse events to reduce shake and osu!lazer input flooding
+- Applies a no-lag micro dead-zone and limits synthetic mouse events to reduce shake and osu!lazer input flooding
+- Provides an Input filtering toggle: turn it off for direct raw, lowest-latency contact output
 
 TabPad works as a macOS pointer utility. It does **not** emulate a native hardware drawing tablet or provide click input; use keyboard keys for osu! clicks.
 
-## Requirements For Building Yourself
+## Requirements
 
 - macOS 13 or later
 - Apple Silicon or Intel Mac
 - A built-in Apple trackpad or supported Apple multitouch trackpad, such as a Magic Trackpad
 - Accessibility permission
 - For building from source: Xcode or Xcode Command Line Tools
+
+## Windows
+
+The current working TabPad app is macOS-only. The Windows workstream is documented in [Windows/README.md](Windows/README.md); it requires a signed, device-specific HID driver before it can provide the same absolute-trackpad behavior.
 
 ## Install and launch
 
@@ -104,7 +101,13 @@ In osu!lazer’s Input settings:
 - Turn **Tablet input** off.
 - Keep osu!lazer focused while testing.
 
-If lazer stutters, fully quit any older TabPad instance and launch the newest build. TabPad coalesces pointer output to 120 Hz to avoid flooding the game’s input queue.
+If lazer stutters, fully quit any older TabPad instance and launch the newest build. TabPad coalesces pointer output to 240 Hz to avoid flooding the game’s input queue without adding noticeable aim latency.
+
+When TabPad is not the frontmost app, its live-preview UI automatically pauses. The raw input bridge remains active, but the SwiftUI preview no longer uses resources during gameplay.
+
+### Input filtering and latency
+
+**Input filtering** is enabled by default. It rejects sub-pixel shake and caps output at 240 Hz. Turn it **off** for the lowest possible latency: TabPad sends every raw contact immediately, with no dead-zone or event-rate cap. If that creates jitter or lazer stutter, turn filtering back on.
 
 ## Trackpad area editor
 
@@ -229,4 +232,5 @@ Do not include serial numbers, account details, or private device identifiers.
     Sources/TrackpadBridge/ C bridge for raw multitouch and pointer events
     scripts/build-app.sh    Builds and signs the local .app bundle
     scripts/package-release.sh Creates the GitHub release ZIP
+    Windows/                Windows driver/app implementation workstream
     TabPad.app              Generated standalone app bundle (ignored by Git)

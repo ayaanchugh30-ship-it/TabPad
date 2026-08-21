@@ -2,7 +2,7 @@
 set -euo pipefail
 
 root_dir="$(cd "$(dirname "$0")/.." && pwd)"
-output_dir="$root_dir/outputs/TabPad.app"
+output_dir="$root_dir/TabPad.app"
 scratch_dir="/private/tmp/tabpad-swift-build"
 cache_dir="/private/tmp/tabpad-module-cache"
 icon_file="$root_dir/Assets/TabPad.icns"

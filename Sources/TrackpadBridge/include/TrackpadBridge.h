@@ -13,6 +13,10 @@ void APStop(void);
 /// Enables absolute mode and filters ordinary relative pointer movement from the trackpad.
 void APSetEnabled(bool enabled);
 
+/// Enables the microscopic jitter dead-zone and output coalescing. Disable for
+/// the lowest possible latency at the cost of more raw contact noise.
+void APSetFiltering(bool enabled);
+
 /// Sets global Quartz screen coordinates and the normalized active trackpad region.
 void APSetMapping(double screenX, double screenY, double screenWidth, double screenHeight,
                   double areaX, double areaY, double areaWidth, double areaHeight,

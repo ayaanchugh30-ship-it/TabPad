@@ -47,6 +47,7 @@ static CFMachPortRef eventTap = NULL;
 static CFRunLoopSourceRef eventTapSource = NULL;
 static CGEventSourceRef syntheticEventSource = NULL;
 static _Atomic bool enabled = false;
+static _Atomic bool filteringEnabled = true;
 static _Atomic double screenX = 0, screenY = 0, screenWidth = 1, screenHeight = 1;
 static _Atomic double areaX = 0, areaY = 0, areaWidth = 1, areaHeight = 1;
 static _Atomic bool flipX = false, flipY = true;
@@ -56,13 +57,12 @@ static _Atomic bool currentFingerPresent = false;
 static MTDeviceRef activeSensorDevice = NULL;
 static char lastError[256] = "Not started";
 
-// Keeps tremor/noise from a small tablet area from becoming visible cursor shake.
-// The threshold is in screen points; the smoothing remains deliberately light.
-static const double jitterDeadZonePoints = 0.65;
-static const double smoothingAlpha = 0.46;
+// Rejects only sub-pixel contact noise. Do not smooth: interpolation makes the
+// cursor visibly chase the finger and is unacceptable for rhythm-game aiming.
+static const double jitterDeadZonePoints = 0.35;
 // Raw trackpad callbacks can arrive far faster than a display can present them.
 // Coalescing output prevents games such as osu!lazer from building a huge SDL queue.
-static const double maximumOutputRateHz = 120.0;
+static const double maximumOutputRateHz = 240.0;
 static bool hasFilteredTarget = false;
 static CGPoint filteredTarget;
 static double lastPostedAt = 0;
@@ -130,18 +130,21 @@ static int frameCallback(MTDeviceRef source, MTFinger *fingers, int count, doubl
     if (!hasFilteredTarget) {
         filteredTarget = target;
         hasFilteredTarget = true;
-    } else {
+        // Never delay the first point of a new contact.
+        lastPostedAt = 0;
+    } else if (atomic_load(&filteringEnabled)) {
         const double dx = target.x - filteredTarget.x;
         const double dy = target.y - filteredTarget.y;
         if (hypot(dx, dy) < jitterDeadZonePoints) return 0;
-        filteredTarget.x += dx * smoothingAlpha;
-        filteredTarget.y += dy * smoothingAlpha;
     }
 
     // MT timestamps are seconds and are monotonic for a device stream. Do the
     // inexpensive filtering on every sample, but post at most one event per 120 Hz.
-    if (lastPostedAt > 0 && timestamp - lastPostedAt < 1.0 / maximumOutputRateHz) return 0;
+    if (atomic_load(&filteringEnabled) && lastPostedAt > 0 && timestamp - lastPostedAt < 1.0 / maximumOutputRateHz) return 0;
     lastPostedAt = timestamp;
+    // Preserve absolute positioning: each posted point is the real current
+    // coordinate, never a smoothed point between the old and new locations.
+    filteredTarget = target;
 
     // CGWarpMouseCursorPosition does not create events, which means osu!lazer's
     // SDL input loop never receives it. Post a tagged absolute mouse move instead.
@@ -224,6 +227,13 @@ void APStop(void) {
 }
 
 void APSetEnabled(bool value) { atomic_store(&enabled, value); }
+
+void APSetFiltering(bool value) {
+    atomic_store(&filteringEnabled, value);
+    // Make the next point immediate after a mode change.
+    hasFilteredTarget = false;
+    lastPostedAt = 0;
+}
 
 void APSetMapping(double sx, double sy, double sw, double sh, double ax, double ay, double aw, double ah, bool invertX, bool invertY) {
     atomic_store(&screenX, sx); atomic_store(&screenY, sy); atomic_store(&screenWidth, fmax(sw, 1)); atomic_store(&screenHeight, fmax(sh, 1));
