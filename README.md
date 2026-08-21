@@ -2,8 +2,6 @@
 
 Turn a Mac trackpad into a one-finger absolute pointing surface for osu!. TabPad maps each physical trackpad position to one fixed screen position, like a drawing tablet.
 
-> **GitHub description:** Turn a Mac trackpad into an absolute osu! tablet surface.
-
 ## I only want the app
 
 On the GitHub **Releases** page, download:
@@ -20,7 +18,7 @@ To install:
 4. If macOS blocks the first launch, Control-click TabPad.app, choose **Open**, then choose **Open** again.
 5. Grant Accessibility permission when TabPad asks.
 
-That is everything a normal user needs. You do not need Xcode, Terminal, or any files from this repository.
+Thats everything a normal user needs. You dont need Xcode, Terminal, or any files from this repository.
 
 ## What TabPad does
 
@@ -39,7 +37,7 @@ TabPad works as a macOS pointer utility. It does **not** emulate a native hardwa
 
 - macOS 13 or later
 - Apple Silicon or Intel Mac
-- A built-in Apple trackpad or supported Apple multitouch trackpad, such as a Magic Trackpad
+- A built-in Apple trackpad or supported Apple multitouch trackpad, like as a Magic Trackpad
 - Accessibility permission
 - For building from source: Xcode or Xcode Command Line Tools
 
