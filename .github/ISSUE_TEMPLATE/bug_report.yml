@@ -1,0 +1,46 @@
+name: Bug report
+description: Report a reproducible TabPad problem.
+title: "[Bug]: "
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please do not include serial numbers, account details, or other private identifiers.
+  - type: input
+    id: macos
+    attributes:
+      label: macOS version
+      placeholder: "macOS 15.0"
+    validations:
+      required: true
+  - type: input
+    id: hardware
+    attributes:
+      label: Mac model and trackpad
+      placeholder: "MacBookPro18,3; built-in trackpad" 
+    validations:
+      required: true
+  - type: dropdown
+    id: lazer
+    attributes:
+      label: Does it affect osu!lazer?
+      options:
+        - "Yes"
+        - "No"
+        - "Not tested"
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: "1. Enable tablet mode\n2. …"
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected and actual behavior
+    validations:
+      required: true

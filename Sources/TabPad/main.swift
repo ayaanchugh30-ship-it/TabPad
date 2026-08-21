@@ -24,6 +24,7 @@ final class DriverController: ObservableObject {
     struct Display: Identifiable, Hashable { let id: CGDirectDisplayID; let name: String; let frame: CGRect }
 
     @Published var active = false { didSet { apply() } }
+    @Published var inputFilteringEnabled = true { didSet { apply() } }
     @Published var displays: [Display] = []
     @Published var selectedDisplayID: CGDirectDisplayID = CGMainDisplayID() { didSet { apply() } }
     // Stored normalized internally; converted to the selected entry unit in the UI.
@@ -234,6 +235,7 @@ final class DriverController: ObservableObject {
         guard let display = displays.first(where: { $0.id == selectedDisplayID }) else { return }
         APSetMapping(display.frame.origin.x, display.frame.origin.y, display.frame.width, display.frame.height,
                      areaX, areaY, areaWidth, areaHeight, invertX, invertY)
+        APSetFiltering(inputFilteringEnabled)
         APSetEnabled(active)
         if status == "Ready — tablet mode is off" || status == "Tablet mode is on" { status = active ? "Tablet mode is on" : "Ready — tablet mode is off" }
     }
@@ -241,7 +243,9 @@ final class DriverController: ObservableObject {
 
 struct ContentView: View {
     @EnvironmentObject private var controller: DriverController
-    private let monitor = Timer.publish(every: 1.0 / 60.0, on: .main, in: .common).autoconnect()
+    // The preview is only for the TabPad window. Keep it out of the gameplay
+    // path: touch input continues in the C bridge while lazer is frontmost.
+    private let monitor = Timer.publish(every: 1.0 / 20.0, on: .main, in: .common).autoconnect()
 
     var body: some View {
         Form {
@@ -260,11 +264,14 @@ struct ContentView: View {
                     .toggleStyle(.switch)
                     .controlSize(.large)
                     .disabled(!controller.accessibilityGranted || (!controller.status.hasPrefix("Ready") && !controller.status.hasPrefix("Tablet")))
+                Toggle("Input filtering", isOn: $controller.inputFilteringEnabled)
+                Text(controller.inputFilteringEnabled ? "Micro-shake filtering is on; output is capped at 240 Hz." : "Raw low-latency mode is on; every trackpad contact is sent immediately.")
+                    .font(.footnote).foregroundStyle(.secondary)
             }
             Section("osu!lazer compatibility") {
                 Text("TabPad now sends absolute mouse-move events that lazer can receive. In osu!lazer Settings → Input, turn High Precision Mouse off and Tablet input off; TabPad presents itself as a mouse, not a native tablet.")
                     .font(.footnote)
-                Text("A tiny 0.65-point dead-zone and light smoothing are always enabled to reduce shake with small areas.")
+                Text("A tiny no-lag dead-zone rejects sub-pixel shake; meaningful movements always map directly to the cursor.")
                     .font(.footnote).foregroundStyle(.secondary)
             }
             Section("Target display") {
@@ -324,7 +331,7 @@ struct ContentView: View {
         }
         .padding()
         .onReceive(monitor) { _ in
-            controller.refreshTrackpadState()
+            if NSApp.isActive { controller.refreshTrackpadState() }
             if !controller.accessibilityGranted { controller.checkAccessibilityPermission() }
         }
     }
