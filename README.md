@@ -6,7 +6,7 @@ Application UI:
 <img width="1470" height="956" alt="image" src="https://github.com/user-attachments/assets/1255ef0c-fe5c-4ec5-80f3-212ec4f2a86b" />
 
 
-OFFICIAL RELEASE:
+Download Here, then follow next steps:
 https://github.com/ayaanchugh30-ship-it/TabPad/releases/tag/release
 
 
