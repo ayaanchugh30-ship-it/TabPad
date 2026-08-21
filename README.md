@@ -43,10 +43,6 @@ TabPad works as a macOS pointer utility. It does **not** emulate a native hardwa
 - Accessibility permission
 - For building from source: Xcode or Xcode Command Line Tools
 
-## Windows
-
-The current working TabPad app is macOS-only. The Windows workstream is documented in [Windows/README.md](Windows/README.md); it requires a signed, device-specific HID driver before it can provide the same absolute-trackpad behavior.
-
 ## Install and launch
 
 ### Use the built app
@@ -232,5 +228,4 @@ Do not include serial numbers, account details, or private device identifiers.
     Sources/TrackpadBridge/ C bridge for raw multitouch and pointer events
     scripts/build-app.sh    Builds and signs the local .app bundle
     scripts/package-release.sh Creates the GitHub release ZIP
-    Windows/                Windows driver/app implementation workstream
     TabPad.app              Generated standalone app bundle (ignored by Git)
