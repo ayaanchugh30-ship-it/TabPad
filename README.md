@@ -4,6 +4,24 @@ Turn a Mac trackpad into a one-finger absolute pointing surface for osu!. TabPad
 
 > **GitHub description:** Turn a Mac trackpad into an absolute osu! tablet surface.
 
+## I only want the app
+
+On the GitHub **Releases** page, download:
+
+> **TabPad.app.zip**
+
+Do **not** download **Source code (zip)** or **Source code (tar.gz)** unless you want to build TabPad yourself.
+
+To install:
+
+1. Double-click TabPad.app.zip to unzip it.
+2. Drag **TabPad.app** to your Applications folder, or another permanent folder you control.
+3. Open TabPad.app.
+4. If macOS blocks the first launch, Control-click TabPad.app, choose **Open**, then choose **Open** again.
+5. Grant Accessibility permission when TabPad asks.
+
+That is everything a normal user needs. You do not need Xcode, Terminal, or any files from this repository.
+
 ## What TabPad does
 
 - Reads raw contacts from Apple multitouch trackpads
@@ -39,6 +57,14 @@ From the repository root, run:
     open TabPad.app
 
 The build script creates and signs a local TabPad.app bundle at the repository root.
+
+### Create a GitHub release download
+
+After building, run:
+
+    scripts/package-release.sh
+
+This creates TabPad.app.zip. Upload **that ZIP file** to a GitHub Release so users can follow the short installation instructions above.
 
 ## Grant Accessibility permission
 
@@ -194,4 +220,5 @@ Do not include serial numbers, account details, or private device identifiers.
     Sources/TabPad/         SwiftUI application
     Sources/TrackpadBridge/ C bridge for raw multitouch and pointer events
     scripts/build-app.sh    Builds and signs the local .app bundle
+    scripts/package-release.sh Creates the GitHub release ZIP
     TabPad.app              Generated standalone app bundle (ignored by Git)
