@@ -8,7 +8,7 @@ Application UI:
 
 > **GitHub description:** Turn a Mac trackpad into an absolute osu! tablet surface.
 
-## I only want the app
+## If you only want the app
 
 On the GitHub **Releases** page, download:
 
