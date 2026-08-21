@@ -2,7 +2,7 @@
 
 Turn a Mac trackpad into a one-finger absolute pointing surface for osu!. TabPad maps each physical trackpad position to one fixed screen position, like a drawing tablet.
 
-## I only want the app
+## If you only want the app
 
 On the GitHub **Releases** page, download:
 
