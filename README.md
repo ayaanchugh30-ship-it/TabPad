@@ -42,7 +42,7 @@ That is everything a normal user needs. You do not need Xcode, Terminal, or any 
 
 TabPad works as a macOS pointer utility. It does **not** emulate a native hardware drawing tablet or provide click input; use keyboard keys for osu! clicks.
 
-## Requirements
+## Requirements For Building Yourself
 
 - macOS 13 or later
 - Apple Silicon or Intel Mac
